@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Description</title>
+</head>
+<body>
+    <h1>Company Information Input</h1>
+    <form id="companyForm">
+        <label for="description">Enter a description of your company:</label><br><br>
+        <textarea id="description" name="description" rows="5" cols="50" placeholder="Type your company description here..."></textarea><br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="response">
+        <h2>Response:</h2>
+        <p id="responseText"></p>
+    </div>
+
+    <script>
+        document.getElementById('companyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const description = document.getElementById('description').value;
+
+            if (!description) {
+                alert("Please enter a description.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ description }),
+                });
+
+                const data = await response.json();
+                document.getElementById('responseText').textContent = data.message || "No response received.";
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('responseText').textContent = "Error occurred while processing your request.";
+            }
+        });
+    </script>
+</body>
+</html>

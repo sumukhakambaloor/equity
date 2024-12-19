@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Description</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            resize: vertical;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .response-container {
+            margin-top: 30px;
+        }
+
+        .response-container h2 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .response-container p {
+            font-size: 16px;
+            color: #555;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .alert {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Company Information Input</h1>
+        <form id="companyForm">
+            <label for="description">Enter a description of your company:</label>
+            <textarea id="description" name="description" placeholder="Type your company description here..."></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="alertMessage" class="alert"></div>
+
+        <div id="response" class="response-container">
+            <h2>Response:</h2>
+            <p id="responseText">Your response will appear here...</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('companyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const description = document.getElementById('description').value;
+            const alertMessage = document.getElementById('alertMessage');
+            const responseText = document.getElementById('responseText');
+            
+            // Reset the alert message
+            alertMessage.textContent = '';
+
+            // Validate input
+            if (!description.trim()) {
+                alertMessage.textContent = 'Please enter a description.';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ description }),
+                });
+
+                const data = await response.json();
+                responseText.textContent = data.message || "No response received.";
+            } catch (error) {
+                console.error('Error:', error);
+                responseText.textContent = "Error occurred while processing your request.";
+            }
+        });
+    </script>
+</body>
+</html>
